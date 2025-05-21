@@ -165,3 +165,7 @@ VALUES
 (13, 17, '2024-09-11', '2024-09-25', 'Atrasado'),
 (15, 16, '2024-09-11', '2024-09-25', 'Em andamento'),
 (17, 14, '2024-09-11', '2024-09-25', 'Concluído');
+
+SELECT * FROM livro;
+
+ALTER TABLE livro ADD COLUMN capa varchar(200);

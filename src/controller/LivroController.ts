@@ -1,5 +1,7 @@
 import { Livro } from "../model/Livro";
 import { Request, Response} from "express";
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Interface LivroDTO
@@ -64,6 +66,18 @@ class LivroController extends Livro {
 
             // Chama o método para persistir o livro no banco de dados
             const result = await Livro.cadastrarLivro(novoLivro);
+
+
+            if (req.file) {
+                const ext = path.extname(req.file.originalname);//pega a extensão original do
+                const novoNome = `${novoLivro.getTitulo()} ${novoLivro.getEditora()}${ext};`// define
+                const antigoPath = req.file.path; //caminho temporario do upload
+                const novoPath = path.resolve(req.file.destination, novoNome);
+                
+                fs.renameSync(antigoPath, novoPath); //renomeia o arquivo do sistema de arquivos
+
+                await Livro.atualizarImagemCapa(novoNome, novoLivro.getIdLivro());
+            }
 
             // Verifica se a query foi executada com sucesso
             if (result) {

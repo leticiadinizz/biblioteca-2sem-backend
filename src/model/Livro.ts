@@ -18,6 +18,7 @@ export class Livro {
     private valorAquisicao: number; // Valor da arquisição do livro
     private statusLivroEmprestado: string; // Status do livro emprestado
     private statusLivro: boolean = true; // Status do livro no sistema
+    private capa: string = '';
 
     /**
     * Construtor da classe Livro
@@ -235,6 +236,22 @@ export class Livro {
         this.statusLivro = _statusLivro;
     }
 
+    /**
+     * Retorna o nome do arquivo da capa do livro
+     * @returns capa: string
+     */
+    public getCapa(): string {
+        return this.capa;
+    }
+
+    /**
+     * Atribui o parâmetro ao atributo capa
+     * @param _capa : string
+     */
+    public setCapa(_capa: string): void {
+        this.capa = _capa;
+    }
+
     // MÉTODO PARA ACESSAR O BANCO DE DADOS
     // CRUD Create - READ - Update - Delete
 
@@ -272,6 +289,7 @@ export class Livro {
                 // adicionando o ID ao objeto
                 novoLivro.setIdLivro(livro.id_livro);
                 novoLivro.setStatusLivro(livro.status_livro);
+                novoLivro.setCapa(livro.capa);
 
                 // adicionando um livro na lista
                 listaDeLivros.push(novoLivro);
@@ -279,8 +297,8 @@ export class Livro {
 
             // retornado a lista de livros para quem chamou a função
             return listaDeLivros;
-        
-        // captura qualquer erro que aconteça
+
+            // captura qualquer erro que aconteça
         } catch (error) {
             // exibe detalhes do erro no console
             console.log(`Erro ao acessar o modelo: ${error}`);
@@ -294,24 +312,27 @@ export class Livro {
      * @param livro Objeto Livro contendo as informações a serem cadastradas
      * @returns Boolean indicando se o cadastro foi bem-sucedido
      */
-    static async cadastrarLivro(livro: Livro): Promise<Boolean> {
+    static async cadastrarLivro(livro: Livro): Promise<{ queryResult: boolean, idLivro?: number }> {
         // variável de controle da execução da query
         let insertResult = false;
+        let objetoResposta = { queryResult: false, idLivro: 0 };
 
         try {
             // Cria a consulta (query) para inserir livro na tabela retornado o ID do livro
             const queryInsertLivro = `
                 INSERT INTO Livro (titulo, autor, editora, ano_publicacao, isbn, quant_total, quant_disponivel, valor_aquisicao, status_livro_emprestado)
                 VALUES (
-                    '${livro.getTitulo().toUpperCase()}',
-                    '${livro.getAutor().toUpperCase()}',
-                    '${livro.getEditora().toUpperCase()}',
-                    '${livro.getAnoPublicacao().toUpperCase()}',
-                    '${livro.getISBN().toUpperCase()}',
-                    '${livro.getQuantTotal()}',
-                    '${livro.getQuantDisponivel()}',
-                    '${livro.getValorAquisicao()}',
-                    '${livro.getStatusLivroEmprestado().toUpperCase()}'
+                
+                '${(livro.getTitulo() || '').toUpperCase()}',
+                '${(livro.getAutor() || '').toUpperCase()}',
+                '${(livro.getEditora() || '').toUpperCase()}',
+                '${livro.getAnoPublicacao() || ''}',
+                '${(livro.getISBN() || '').toUpperCase()}',
+                '${livro.getQuantTotal() || 0}',
+                '${livro.getQuantDisponivel() || 0}',
+                '${livro.getValorAquisicao() || 0}',
+                '${(livro.getStatusLivroEmprestado() || '').toUpperCase()}'
+
                 )
                 RETURNING id_livro;`;
 
@@ -324,16 +345,19 @@ export class Livro {
                 console.log(`Livro cadastrado com sucesso. ID: ${result.rows[0].id_livro}`);
                 // altera o valor da variável de controle para verdadeiro
                 insertResult = true;
+                // salva o ID do livro em uma variável
+                let idLivro = result.rows[0].id_livro;
+
+                // Montar o objeto de resposta
+                objetoResposta = { queryResult: insertResult, idLivro: idLivro }
             }
 
             // retorna o valor da variável de controle
-            return insertResult;
-        // captura qualquer tipo de erro que possa acontecer
+            return objetoResposta;
+            // captura qualquer tipo de erro que possa acontecer
         } catch (error) {
-            // exibe detalhes do erro no console
             console.error(`Erro ao cadastrar livro: ${error}`);
-            // retorna o valor da variável de controle
-            return insertResult;
+            return { queryResult: false };
         }
     }
 
@@ -351,7 +375,7 @@ export class Livro {
             const queryDeleteEmprestimoLivro = `UPDATE emprestimo
                                                     SET status_emprestimo_registro = FALSE 
                                                     WHERE id_livro=${id_livro}`;
-                                                    
+
             // executa a query para remover empréstimo
             await database.query(queryDeleteEmprestimoLivro);
 
@@ -371,7 +395,7 @@ export class Livro {
             // retorna o valor da variável de controle
             return queryResult;
 
-        // captura qualquer erro que possa acontecer
+            // captura qualquer erro que possa acontecer
         } catch (error) {
             // Exibe detalhes do erro no console
             console.log(`Erro na consulta: ${error}`);
@@ -411,12 +435,26 @@ export class Livro {
 
             // Retorna o resultado da operação para quem chamou a função.
             return queryResult;
-        // captura qualquer erro que possa acontecer
+            // captura qualquer erro que possa acontecer
         } catch (error) {
             // exibe detalhes do erro no console
             console.log(`Erro na consulta: ${error}`);
             // retorna o valor da variável de controle
             return queryResult;
         }
+    }
+
+    /**
+     * Atualiza a capa do livro
+     * 
+     * @param nomeArquivo Nome do arquivo a ser salvo no banco de dados
+     * @param idLivro ID do livro associado ao arquivo
+     */
+    static async atualizarImagemCapa(nomeArquivo: string, idLivro: number): Promise<void> {
+        // Define a query SQL que atualiza o campo capa do livro com o nome do arquivo
+        const query = `UPDATE livro SET capa = $1 WHERE id_livro = $2`;
+
+        // Executa a query passando o nome do arquivo e o id do livro como parâmetros
+        await database.query(query, [nomeArquivo, idLivro]);
     }
 }
