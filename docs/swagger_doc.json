@@ -1,0 +1,259 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "v1.0.0",
+    "title": "Biblioteca",
+    "description": "Implementação do Swagger à API"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333",
+      "description": ""
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "Rota raiz para teste",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/lista/alunos": {
+      "get": {
+        "tags": ["Alunos"],
+        "summary": "Listar todos os alunos",
+        "description": "Esta rota retorna a lista de todos os alunos cadastrados no banco de dados.",
+        "operationId": "listarAlunos",
+        "security": [
+          { "apiKeyAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de alunos recuperada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "idAluno": { "type": "integer", "example": 1 },
+                      "nome": { "type": "string", "example": "Samuel" },
+                      "sobrenome": { "type": "string", "example": "Viana" },
+                      "dataNascimento": { "type": "string", "format": "date", "example": "1995-01-26" },
+                      "endereco": { "type": "string", "example": "Parque Leblon, 478" },
+                      "email": { "type": "string", "example": "samuel.caua.viana@facebook.com" },
+                      "celular": { "type": "string", "example": "85996712239" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao recuperar a lista de alunos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": { "type": "string", "example": "Erro ao recuperar as informações do Aluno" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/novo/aluno": {
+      "post": {
+        "tags": ["Alunos"],
+        "summary": "Cadastrar novo aluno",
+        "description": "Esta rota recebe informações de um aluno para cadastrar no banco de dados.",
+        "operationId": "cadastrarAluno",
+        "security": [
+          { "apiKeyAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": { "type": "string", "example": "Samuel" },
+                  "sobrenome": { "type": "string", "example": "Viana" },
+                  "dataNascimento": { "type": "string", "format": "date", "example": "1995-01-26" },
+                  "endereco": { "type": "string", "example": "Parque Leblon, 478" },
+                  "email": { "type": "string", "format": "email", "example": "samuel.caua.viana@facebook.com" },
+                  "celular": { "type": "string", "example": "85996712239" }
+                },
+                "required": ["nome", "sobrenome", "dataNascimento", "endereco", "email", "celular"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aluno cadastrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mensagem": { "type": "string", "example": "Aluno cadastrado com sucesso" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possível cadastrar o aluno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": { "type": "string", "example": "Dados inválidos ou incompletos" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/remove/aluno": {
+      "put": {
+        "tags": ["Alunos"],
+        "summary": "Remover um aluno",
+        "description": "Esta rota remove um aluno do banco de dados com base no id informado na query string.",
+        "operationId": "removerAluno",
+        "security": [
+          { "apiKeyAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "idAluno",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "example": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aluno removido com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Aluno removido com sucesso"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro ao deletar aluno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Erro ao deletar aluno"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atualiza/aluno": {
+      "put": {
+        "tags": ["Alunos"],
+        "summary": "Atualizar cadastro de um aluno",
+        "description": "Esta rota atualiza as informações de um aluno no banco de dados, com o id passado via query string.",
+        "operationId": "atualizarAluno",
+        "security": [
+          { "apiKeyAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "idAluno",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "example": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": { "type": "string", "example": "Samuel" },
+                  "sobrenome": { "type": "string", "example": "Viana" },
+                  "dataNascimento": { "type": "string", "format": "date", "example": "1995-01-26" },
+                  "endereco": { "type": "string", "example": "Parque Leblon, 478" },
+                  "email": { "type": "string", "example": "samuel.caua.viana@facebook.com" },
+                  "celular": { "type": "string", "example": "85996712239" }
+                },
+                "required": ["nome", "sobrenome", "dataNascimento", "endereco", "email", "celular"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cadastro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mensagem": { "type": "string", "example": "Cadastro atualizado com sucesso!" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao atualizar o aluno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Não foi possível atualizar o aluno no banco de dados"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}

@@ -46,6 +46,7 @@ const storageCapa = multer.diskStorage({
     cb(null, filename); // Retorna o nome para o multer salvar
   }
 });
-export const Upload = multer({ storage });
 
+
+export const Upload = multer({ storage });
 export const uploadCapa = multer ({storage : storageCapa}); // Exporta o middleware para ser usado nas rotas
