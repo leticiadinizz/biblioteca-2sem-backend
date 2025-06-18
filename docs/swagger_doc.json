@@ -3,7 +3,7 @@
   "info": {
     "version": "v1.0.0",
     "title": "Biblioteca",
-    "description": "Implementação do Swagger à API"
+    "description": "Implementação do Swigger à API"
   },
   "servers": [
     {
@@ -14,7 +14,7 @@
   "paths": {
     "/": {
       "get": {
-        "description": "Rota raiz para teste",
+        "description": "",
         "responses": {
           "200": {
             "description": "OK"
@@ -22,50 +22,17 @@
         }
       }
     },
-    "/lista/alunos": {
+    "/listar/alunos": {
       "get": {
         "tags": ["Alunos"],
         "summary": "Listar todos os alunos",
-        "description": "Esta rota retorna a lista de todos os alunos cadastrados no banco de dados.",
-        "operationId": "listarAlunos",
-        "security": [
-          { "apiKeyAuth": [] }
-        ],
+        "description": "Essa rota retorna todos os alunos cadastrados.",
         "responses": {
           "200": {
-            "description": "Lista de alunos recuperada com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "idAluno": { "type": "integer", "example": 1 },
-                      "nome": { "type": "string", "example": "Samuel" },
-                      "sobrenome": { "type": "string", "example": "Viana" },
-                      "dataNascimento": { "type": "string", "format": "date", "example": "1995-01-26" },
-                      "endereco": { "type": "string", "example": "Parque Leblon, 478" },
-                      "email": { "type": "string", "example": "samuel.caua.viana@facebook.com" },
-                      "celular": { "type": "string", "example": "85996712239" }
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Lista de alunos retornada com sucesso"
           },
           "400": {
-            "description": "Erro ao recuperar a lista de alunos",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "erro": { "type": "string", "example": "Erro ao recuperar as informações do Aluno" }
-                  }
-                }
-              }
-            }
+            "description": "Erro ao buscar alunos"
           }
         }
       }
@@ -77,7 +44,9 @@
         "description": "Esta rota recebe informações de um aluno para cadastrar no banco de dados.",
         "operationId": "cadastrarAluno",
         "security": [
-          { "apiKeyAuth": [] }
+          {
+            "apiKeyAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -86,14 +55,41 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "nome": { "type": "string", "example": "Samuel" },
-                  "sobrenome": { "type": "string", "example": "Viana" },
-                  "dataNascimento": { "type": "string", "format": "date", "example": "1995-01-26" },
-                  "endereco": { "type": "string", "example": "Parque Leblon, 478" },
-                  "email": { "type": "string", "format": "email", "example": "samuel.caua.viana@facebook.com" },
-                  "celular": { "type": "string", "example": "85996712239" }
+                  "nome": {
+                    "type": "string",
+                    "example": "Leticia"
+                  },
+                  "sobrenome": {
+                    "type": "string",
+                    "example": "Diniz"
+                  },
+                  "dataNascimento": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2008-03-21"
+                  },
+                  "endereco": {
+                    "type": "string",
+                    "example": "Cidade das esmeraldas, 234"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "leticiadiniz@gmail.com"
+                  },
+                  "celular": {
+                    "type": "string",
+                    "example": "16993442121"
+                  }
                 },
-                "required": ["nome", "sobrenome", "dataNascimento", "endereco", "email", "celular"]
+                "required": [
+                  "nome",
+                  "sobrenome",
+                  "dataNascimento",
+                  "endereco",
+                  "email",
+                  "celular"
+                ]
               }
             }
           }
@@ -106,7 +102,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "mensagem": { "type": "string", "example": "Aluno cadastrado com sucesso" }
+                    "mensagem": {
+                      "type": "string",
+                      "example": "Aluno cadastrado com sucesso"
+                    }
                   }
                 }
               }
@@ -119,7 +118,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "erro": { "type": "string", "example": "Dados inválidos ou incompletos" }
+                    "erro": {
+                      "type": "string",
+                      "example": "Dados inválidos ou incompletos"
+                    }
                   }
                 }
               }
@@ -128,75 +130,44 @@
         }
       }
     },
-    "/remove/aluno": {
+    "/remover/aluno": {
       "put": {
         "tags": ["Alunos"],
-        "summary": "Remover um aluno",
-        "description": "Esta rota remove um aluno do banco de dados com base no id informado na query string.",
-        "operationId": "removerAluno",
-        "security": [
-          { "apiKeyAuth": [] }
-        ],
-        "parameters": [
-          {
-            "name": "idAluno",
-            "in": "query",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+        "summary": "Remover aluno",
+        "description": "Essa rota remove logicamente (altera o status) de um aluno com base em seu ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_aluno": { "type": "integer", "example": 1 }
+                },
+                "required": ["id_aluno"]
+              }
+            }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Aluno removido com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "Aluno removido com sucesso"
-                }
-              }
-            }
+            "description": "Aluno removido com sucesso"
           },
-          "401": {
-            "description": "Erro ao deletar aluno",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "Erro ao deletar aluno"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Erro interno do servidor",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "error"
-                }
-              }
-            }
+          "400": {
+            "description": "Erro ao remover aluno"
           }
         }
       }
     },
-    "/atualiza/aluno": {
+    "/atualizar/aluno": {
       "put": {
         "tags": ["Alunos"],
-        "summary": "Atualizar cadastro de um aluno",
-        "description": "Esta rota atualiza as informações de um aluno no banco de dados, com o id passado via query string.",
+        "summary": "Atualizar cadastro de aluno",
+        "description": "Essa rota atualiza os dados de um aluno já cadastrado.",
         "operationId": "atualizarAluno",
         "security": [
-          { "apiKeyAuth": [] }
-        ],
-        "parameters": [
           {
-            "name": "idAluno",
-            "in": "query",
-            "required": true,
-            "schema": { "type": "integer", "example": 1 }
+            "apiKeyAuth": []
           }
         ],
         "requestBody": {
@@ -206,39 +177,436 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "nome": { "type": "string", "example": "Samuel" },
-                  "sobrenome": { "type": "string", "example": "Viana" },
-                  "dataNascimento": { "type": "string", "format": "date", "example": "1995-01-26" },
-                  "endereco": { "type": "string", "example": "Parque Leblon, 478" },
-                  "email": { "type": "string", "example": "samuel.caua.viana@facebook.com" },
-                  "celular": { "type": "string", "example": "85996712239" }
+                  "idAluno": { "type": "integer", "example": 1 },
+                  "nome": { "type": "string", "example": "Leticia" },
+                  "sobrenome": { "type": "string", "example": "Diniz" },
+                  "dataNascimento": { "type": "string", "format": "date", "example": "2008-03-21" },
+                  "endereco": { "type": "string", "example": "Cidade das esmeraldas, 234" },
+                  "email": { "type": "string", "format": "email", "example": "leticiadiniz@gmail.com" },
+                  "celular": { "type": "string", "example": "16993442121" }
                 },
-                "required": ["nome", "sobrenome", "dataNascimento", "endereco", "email", "celular"]
+                "required": ["idAluno", "nome", "sobrenome", "dataNascimento", "endereco", "email", "celular"]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Cadastro atualizado com sucesso",
+            "description": "Aluno atualizado com sucesso",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "mensagem": { "type": "string", "example": "Cadastro atualizado com sucesso!" }
+                    "mensagem": {
+                      "type": "string",
+                      "example": "Aluno atualizado com sucesso"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Erro ao atualizar o aluno",
+            "description": "Erro ao atualizar aluno",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "example": "Não foi possível atualizar o aluno no banco de dados"
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "string",
+                      "example": "Dados inválidos ou incompletos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lista/livros": {
+      "get": {
+        "tags": ["Livros"],
+        "summary": "Listar todos os livros",
+        "description": "Essa rota retorna todos os livros cadastrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de livros retornada com sucesso"
+          },
+          "400": {
+            "description": "Erro ao buscar livros"
+          }
+        }
+      }
+    },
+    "/novo/livro": {
+      "post": {
+        "tags": ["Livros"],
+        "summary": "Cadastrar novo livro",
+        "description": "Esta rota recebe informações de um livro para cadastrar no banco de dados.",
+        "operationId": "cadastrarLivro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "titulo": {
+                    "type": "string",
+                    "example": "Dom Casmurro"
+                  },
+                  "autor": {
+                    "type": "string",
+                    "example": "Machado de Assis"
+                  },
+                  "editora": {
+                    "type": "string",
+                    "example": "Editora Garnier"
+                  },
+                  "anoPublicacao": {
+                    "type": "integer",
+                    "example": 1899
+                  },
+                  "genero": {
+                    "type": "string",
+                    "example": "Romance"
+                  },
+                  "isbn": {
+                    "type": "string",
+                    "example": "9788535930773"
+                  },
+                  "quantidadeDisponivel": {
+                    "type": "integer",
+                    "example": 5
+                  }
+                },
+                "required": [
+                  "titulo",
+                  "autor",
+                  "editora",
+                  "anoPublicacao",
+                  "genero",
+                  "isbn",
+                  "quantidadeDisponivel"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Livro cadastrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mensagem": {
+                      "type": "string",
+                      "example": "Livro cadastrado com sucesso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possível cadastrar o livro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "string",
+                      "example": "Dados inválidos ou incompletos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/remove/livro": {
+      "put": {
+        "tags": ["Livros"],
+        "summary": "Remover livro",
+        "description": "Essa rota remove logicamente (altera o status) de um livro com base em seu ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_livro": { "type": "integer", "example": 1 }
+                },
+                "required": ["id_livro"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Livro removido com sucesso"
+          },
+          "400": {
+            "description": "Erro ao remover livro"
+          }
+        }
+      }
+    },
+    "/atualiza/livro": {
+      "put": {
+        "tags": ["Livros"],
+        "summary": "Atualizar cadastro de livro",
+        "description": "Essa rota atualiza os dados de um livro já cadastrado.",
+        "operationId": "atualizarLivro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idLivro": { "type": "integer", "example": 1 },
+                  "titulo": { "type": "string", "example": "Dom Casmurro" },
+                  "autor": { "type": "string", "example": "Machado de Assis" },
+                  "editora": { "type": "string", "example": "Editora Garnier" },
+                  "anoPublicacao": { "type": "integer", "example": 1899 },
+                  "genero": { "type": "string", "example": "Romance" },
+                  "isbn": { "type": "string", "example": "9788535930773" },
+                  "quantidadeDisponivel": { "type": "integer", "example": 5 }
+                },
+                "required": ["idLivro", "titulo", "autor", "editora", "anoPublicacao", "genero", "isbn", "quantidadeDisponivel"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Livro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mensagem": {
+                      "type": "string",
+                      "example": "Livro atualizado com sucesso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao atualizar livro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "string",
+                      "example": "Dados inválidos ou incompletos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lista/emprestimos": {
+      "get": {
+        "tags": ["Empréstimos"],
+        "summary": "Listar todos os empréstimos",
+        "description": "Essa rota retorna todos os empréstimos cadastrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de empréstimos retornada com sucesso"
+          },
+          "400": {
+            "description": "Erro ao buscar empréstimos"
+          }
+        }
+      }
+    },
+    "/novo/emprestimo": {
+      "post": {
+        "tags": ["Empréstimos"],
+        "summary": "Cadastrar novo empréstimo",
+        "description": "Esta rota recebe informações de um empréstimo para cadastrar no banco de dados.",
+        "operationId": "cadastrarEmprestimo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_aluno": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "id_livro": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "dataEmprestimo": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2023-05-15"
+                  },
+                  "dataDevolucaoPrevista": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2023-05-30"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "ativo"
+                  }
+                },
+                "required": [
+                  "id_aluno",
+                  "id_livro",
+                  "dataEmprestimo",
+                  "dataDevolucaoPrevista",
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Empréstimo cadastrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mensagem": {
+                      "type": "string",
+                      "example": "Empréstimo cadastrado com sucesso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possível cadastrar o empréstimo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "string",
+                      "example": "Dados inválidos ou incompletos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/remove/emprestimo": {
+      "put": {
+        "tags": ["Empréstimos"],
+        "summary": "Remover empréstimo",
+        "description": "Essa rota remove logicamente (altera o status) de um empréstimo com base em seu ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_emprestimo": { "type": "integer", "example": 1 }
+                },
+                "required": ["id_emprestimo"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Empréstimo removido com sucesso"
+          },
+          "400": {
+            "description": "Erro ao remover empréstimo"
+          }
+        }
+      }
+    },
+    "/atualiza/emprestimo": {
+      "put": {
+        "tags": ["Empréstimos"],
+        "summary": "Atualizar empréstimo",
+        "description": "Essa rota atualiza os dados de um empréstimo já cadastrado.",
+        "operationId": "atualizarEmprestimo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idEmprestimo": { "type": "integer", "example": 1 },
+                  "id_aluno": { "type": "integer", "example": 1 },
+                  "id_livro": { "type": "integer", "example": 1 },
+                  "dataEmprestimo": { "type": "string", "format": "date", "example": "2023-05-15" },
+                  "dataDevolucaoPrevista": { "type": "string", "format": "date", "example": "2023-05-30" },
+                  "dataDevolucaoReal": { "type": "string", "format": "date", "example": "2023-05-28" },
+                  "status": { "type": "string", "example": "finalizado" },
+                  "multa": { "type": "number", "format": "float", "example": 0.0 }
+                },
+                "required": ["idEmprestimo", "id_aluno", "id_livro", "dataEmprestimo", "dataDevolucaoPrevista", "status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Empréstimo atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mensagem": {
+                      "type": "string",
+                      "example": "Empréstimo atualizado com sucesso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao atualizar empréstimo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "erro": {
+                      "type": "string",
+                      "example": "Dados inválidos ou incompletos"
+                    }
+                  }
                 }
               }
             }
